@@ -253,10 +253,15 @@ with st.sidebar:
 
     st.markdown("### Configuration")
 
-    # API Key from .env
-    api_key_input = os.environ.get("OPENROUTER_API_KEY", "")
+    # API Key: try st.secrets first (Streamlit Cloud), then .env (local)
+    api_key_input = ""
+    try:
+        api_key_input = st.secrets["OPENROUTER_API_KEY"]
+    except (KeyError, FileNotFoundError):
+        api_key_input = os.environ.get("OPENROUTER_API_KEY", "")
+
     if not api_key_input:
-        st.error("API key not found in .env file.")
+        st.error("API key not found. Set it in Streamlit Secrets or .env file.")
     else:
         st.success("API key loaded")
 
